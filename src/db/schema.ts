@@ -1,6 +1,7 @@
 import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import type { InferSelectModel } from "drizzle-orm";
 
-export const userTable = pgTable("user", {
+const userTable = pgTable("user", {
   id: text("id").primaryKey(),
   googleId: text("google_id").notNull().unique(),
   email: text("email").notNull(),
@@ -11,7 +12,7 @@ export const userTable = pgTable("user", {
   profileImageUrl: text("profile_image_url"),
 });
 
-export const sessionTable = pgTable("session", {
+const sessionTable = pgTable("session", {
   id: text("id").primaryKey(),
   userId: text("user_id")
     .notNull()
@@ -21,3 +22,6 @@ export const sessionTable = pgTable("session", {
     mode: "date",
   }).notNull(),
 });
+
+export type User = InferSelectModel<typeof userTable>;
+export type Session = InferSelectModel<typeof sessionTable>;

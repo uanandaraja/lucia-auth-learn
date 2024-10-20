@@ -8,6 +8,8 @@
     "migrate": "tsx scripts/migrate.ts"
   },
   "dependencies": {
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.26.2",
     "drizzle-orm": "^0.35.2",
@@ -20,4 +22,3 @@
     "wrangler": "^3.79.0"
   }
 }
-
