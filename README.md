@@ -1,4 +1,4 @@
-# Cloudflare Workers and Hono type shit
+# Doing auth with Lucia in Cloudflare Workers and Hono type shit
 
 How to start?
 
