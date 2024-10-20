@@ -1,3 +1,5 @@
+import { Context } from "hono";
+import { Env } from "../env.js";
 import { userTable, sessionTable } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import {
@@ -5,6 +7,9 @@ import {
   encodeHexLowerCase,
 } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
+import type { User, Session } from "../db/schema.js";
+import { getDbClient } from "../db/index.js";
+import { Google } from "arctic";
 
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20);
@@ -13,7 +18,13 @@ export function generateSessionToken(): string {
   return token;
 }
 
-export async function createSession(token: string, userId: number): Session {
+export async function createSession(
+  c: Context<{ Bindings: Env }>,
+  token: string,
+  userId: string,
+): Promise<Session> {
+  const db = getDbClient(c.env);
+
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const session: Session = {
     id: sessionId,
@@ -25,8 +36,10 @@ export async function createSession(token: string, userId: number): Session {
 }
 
 export async function validateSessionToken(
+  c: Context<{ Bindings: Env }>,
   token: string,
 ): Promise<SessionValidationResult> {
+  const db = getDbClient(c.env);
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const result = await db
     .select({ user: userTable, session: sessionTable })
@@ -53,8 +66,20 @@ export async function validateSessionToken(
   return { session, user };
 }
 
-export async function invalidateSession(sessionId: string): void {
+export async function invalidateSession(
+  c: Context<{ Bindings: Env }>,
+  sessionId: string,
+): Promise<void> {
+  const db = getDbClient(c.env);
   await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+}
+
+export function createGoogle(env: Env) {
+  return new Google(
+    env.GOOGLE_CLIENT_ID,
+    env.GOOGLE_CLIENT_SECRET,
+    env.GOOGLE_REDIRECT_URI,
+  );
 }
 
 export type SessionValidationResult =
