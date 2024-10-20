@@ -1,8 +1,7 @@
-```
-npm install
-npm run dev
-```
+# Cloudflare Workers and Hono type shit
+
+How to start?
 
 ```
-npm run deploy
+pnpm dlx create-hono@latest your-app-title --template cloudflare-workers --install --pm pnpm`
 ```
