@@ -1,9 +1,15 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { Env } from "./env";
+import v1Router from "./api/v1";
+const app = new Hono<{ Bindings: Env }>();
 
-const app = new Hono<{ Bindings: CloudflareBindings }>()
+app.use("*", cors());
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+app.get("/", (c) => c.text("Fascribe FTW!"));
+app.get("/", (c) => c.text("Fascribe FTW!"));
 
-export default app
+app.route("/api/v1", v1Router);
+
+export default app;
+

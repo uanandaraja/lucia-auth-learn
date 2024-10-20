@@ -75,8 +75,8 @@ enabled = true
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#kv-namespaces
 [[kv_namespaces]]
-binding = "SESSION_KV"
-id = "e6093f15eb3e47679d0dd13e92420b67"
+binding = "your-kv-binding"
+id = "your-kv-binding-id"
 
 # Bind an mTLS certificate. Use to present a client certificate when communicating with another service.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#mtls-certificates
