@@ -28,13 +28,12 @@ export async function handleGoogleLogin(c: Context<{ Bindings: Env }>) {
     "email",
   ]);
 
-  // Store state and code verifier in KV
   await c.env.SESSION_KV.put(
     `oauth_state:${state}`,
     JSON.stringify({
       codeVerifier,
     }),
-    { expirationTtl: 600 }, // 10 minutes expiration
+    { expirationTtl: 600 },
   );
 
   return c.json({
@@ -56,7 +55,6 @@ export async function handleGoogleCallback(c: Context<{ Bindings: Env }>) {
     return c.text("Invalid request: Missing code or state", 400);
   }
 
-  // Retrieve code verifier from KV
   const storedData = await c.env.SESSION_KV.get(`oauth_state:${state}`);
   if (!storedData) {
     console.error("No stored data found for state", state);
@@ -77,14 +75,12 @@ export async function handleGoogleCallback(c: Context<{ Bindings: Env }>) {
     return c.text("Invalid stored data", 500);
   }
 
-  // Clean up the KV entry
   await c.env.SESSION_KV.delete(`oauth_state:${state}`);
 
   try {
     const tokens = await google.validateAuthorizationCode(code, codeVerifier);
     console.log("Received tokens:", tokens);
 
-    // Call the accessToken function to get the actual token string
     const accessToken = tokens.accessToken();
     console.log("Access Token:", accessToken);
 
@@ -145,13 +141,12 @@ export async function handleGoogleCallback(c: Context<{ Bindings: Env }>) {
 
     const session = await createSession(c, sessionToken, userId);
 
-    // Store session in KV
     await c.env.SESSION_KV.put(
       `session:${session.id}`,
       JSON.stringify({
         userId,
         expiresAt: session.expiresAt,
-        fresh: true, // New sessions are fresh
+        fresh: true,
       }),
       {
         expirationTtl: Math.floor(
